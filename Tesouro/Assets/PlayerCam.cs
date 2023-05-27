@@ -4,32 +4,31 @@ using UnityEngine;
 
 public class PlayerCam : MonoBehaviour
 {
-    public float senX;
-    public float senY;
+    public Transform tf;
+	public Transform camTf;
 
-    public Transform orientation;
+	Vector2 rotMouse;
+	public int sens; 
 
-    float xRot;
-    float yRot;
-    void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+	void Start()
+	{
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+	}
 
     // Update is called once per frame
     void Update()
     {
-        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * senX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * senY;
+        Vector2 controlMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-        yRot += mouseX;
+		rotMouse = new Vector2(rotMouse.x + controlMouse.x * sens * Time.deltaTime,
+								rotMouse.y + controlMouse.y * sens * Time.deltaTime);
 
-        xRot -= mouseY;
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
+		tf.eulerAngles = new Vector3(tf.eulerAngles.x, rotMouse.x, tf.eulerAngles.z);
 
-        transform.rotation = Quaternion.Euler(xRot, yRot, 0);
-        orientation.rotation = Quaternion.Euler(0, yRot, 0);
-
+		rotMouse.y = Mathf.Clamp(rotMouse.y, -90, 90);
+		
+		camTf.localEulerAngles = new Vector3(-rotMouse.y, camTf.localEulerAngles.y, camTf.localEulerAngles.z);
+		
     }
 }
